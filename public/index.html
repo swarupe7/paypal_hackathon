@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mandate</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23081a18' width='32' height='32'/%3E%3Cpath d='M6 16h20' stroke='%23b8f34a' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <div id="banner" class="banner" role="status" hidden></div>
+
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="brand">Mandate</p>
+      <h1>AI decides. PayPal moves the money.</h1>
+      <p class="lede">Authorize a hold, let a worker finish the job, then capture or void based on a second model’s verdict.</p>
+      <div class="hero-actions">
+        <a class="primary" href="#workspace">Open the rail</a>
+        <span class="sandbox-tag">PayPal sandbox</span>
+      </div>
+    </div>
+
+    <div class="rail" aria-hidden="true">
+      <div class="rail-track">
+        <span class="rail-node"></span>
+        <span class="rail-node"></span>
+        <span class="rail-node"></span>
+        <span class="rail-node"></span>
+        <span class="rail-pulse"></span>
+      </div>
+      <ol class="rail-steps">
+        <li data-step="hold"><span>01</span>Hold</li>
+        <li data-step="work"><span>02</span>Work</li>
+        <li data-step="verify"><span>03</span>Verify</li>
+        <li data-step="settle"><span>04</span>Settle</li>
+      </ol>
+    </div>
+  </header>
+
+  <main id="workspace" class="workspace">
+    <section class="composer" aria-labelledby="compose-title">
+      <div class="section-head">
+        <h2 id="compose-title">Fund a mandate</h2>
+        <p>Pick a demo path or write your own brief and acceptance rules.</p>
+      </div>
+
+      <div class="example-row" role="group" aria-label="Demo paths">
+        <button type="button" class="choice" id="use-pass">
+          <strong>Should be paid</strong>
+          <span>Worker writes a clean briefing. Capture path.</span>
+        </button>
+        <button type="button" class="choice" id="use-fail">
+          <strong>Planted failure</strong>
+          <span>Broken draft on purpose. Void path.</span>
+        </button>
+      </div>
+
+      <form id="mandate-form" class="mandate-form">
+        <label class="amount-field">
+          Amount in USD
+          <input id="amount" name="amount" inputmode="decimal" autocomplete="off" required value="15.00">
+        </label>
+        <label>
+          Brief
+          <textarea id="brief" name="brief" rows="6" required placeholder="What should the worker produce?"></textarea>
+        </label>
+        <label>
+          Acceptance rules
+          <textarea id="rules" name="rules" rows="5" required placeholder="When should the verifier capture the hold?"></textarea>
+        </label>
+        <p id="example-note" class="note" hidden></p>
+        <button type="submit" class="primary wide" id="create-button" disabled>Hold funds in PayPal</button>
+      </form>
+
+      <section class="ledger" aria-labelledby="ledger-title">
+        <div class="section-head compact">
+          <h2 id="ledger-title">Ledger</h2>
+        </div>
+        <ul id="ledger-list" class="ledger-list"></ul>
+      </section>
+    </section>
+
+    <section class="stage" aria-live="polite">
+      <div id="empty-stage" class="empty-stage">
+        <p class="empty-kicker">Live mandate</p>
+        <h2>Nothing on the rail yet</h2>
+        <p>Create a hold, approve it with the sandbox personal buyer, then run the verifier. A pass captures. A fail voids.</p>
+        <div class="empty-flow">
+          <span>Authorize</span>
+          <span>Produce</span>
+          <span>Judge</span>
+          <span>Settle</span>
+        </div>
+      </div>
+
+      <article id="mandate-view" hidden>
+        <header class="stage-head">
+          <div>
+            <p id="status-chip" class="chip">Created</p>
+            <p class="stage-kicker">Active mandate</p>
+          </div>
+          <p id="amount-label" class="amount"></p>
+        </header>
+
+        <div class="live-rail" id="live-rail" aria-hidden="true">
+          <span data-rail="created">Approve</span>
+          <span data-rail="held">Hold</span>
+          <span data-rail="decide">Decide</span>
+          <span data-rail="settled">Settled</span>
+        </div>
+
+        <dl class="ids" id="paypal-ids"></dl>
+        <p id="stage-error" class="stage-error" hidden></p>
+
+        <div id="approval-block" class="block">
+          <h3>Approve the hold</h3>
+          <p class="hint">Sign in with the sandbox <strong>personal</strong> buyer, not your live PayPal account.</p>
+          <div id="paypal-button"></div>
+          <p class="hint">If the popup already closed, confirm here.</p>
+          <div class="button-row">
+            <button type="button" class="secondary" id="confirm-approval">I approved this hold</button>
+            <a id="approve-link" class="text-link" href="#" target="_blank" rel="noreferrer">Open approval page</a>
+          </div>
+        </div>
+
+        <div id="work-block" class="block" hidden>
+          <h3>Deliverable</h3>
+          <p id="worker-note" class="hint"></p>
+          <pre id="deliverable" class="panel"></pre>
+          <button type="button" class="primary" id="run-button">Run worker, then verifier</button>
+        </div>
+
+        <div id="verdict-block" class="block" hidden>
+          <h3>Verifier</h3>
+          <p id="verdict-summary" class="hint"></p>
+          <pre id="rationale" class="panel"></pre>
+          <p id="citations" class="hint"></p>
+        </div>
+
+        <div id="override-block" class="block override" hidden>
+          <h3>Override the model</h3>
+          <p class="hint">For judges if the model errors and the sandbox payment still needs to finish.</p>
+          <div class="button-row">
+            <button type="button" class="secondary" id="capture-button">Capture anyway</button>
+            <button type="button" class="secondary danger" id="void-button">Void the hold</button>
+          </div>
+        </div>
+
+        <button type="button" class="text-button" id="refresh-button">Refresh PayPal status</button>
+      </article>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "paypal-mandate",
+  "version": "1.0.0",
+  "description": "Hold a PayPal sandbox payment until a second AI model accepts the work, then capture or void it.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node scripts/check-env.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2"
+  }
+}
